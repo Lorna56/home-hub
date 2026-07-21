@@ -31,7 +31,7 @@ class UserRegistrationTests(APITestCase):
 
         data = {
             "username": "john",
-            "email": "john@example.com",
+            "email": "john123@example.com",
             "password": "password123",
             "first_name": "John",
             "last_name": "Doe",
