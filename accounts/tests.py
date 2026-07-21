@@ -10,7 +10,7 @@ class UserModelTests(APITestCase):
     def test_create_user(self):
         user = User.objects.create_user(
             username="testuser",
-            email="test@example.com",
+            email="test123@example.com",
             password="password123",
             role="TENANT",
             phone_number="0700000000",
