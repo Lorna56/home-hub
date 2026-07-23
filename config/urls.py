@@ -49,4 +49,9 @@ urlpatterns = [
         TokenRefreshView.as_view(),
         name="token_refresh",
     ),
+
+    path(
+        "api/properties/",
+        include("properties.urls")
+    ),
 ]
