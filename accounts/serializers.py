@@ -12,7 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
-            "role",
             "phone_number",
         ]
 
@@ -30,7 +29,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password",
             "first_name",
             "last_name",
-            "role",
             "phone_number",
         ]
 

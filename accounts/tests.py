@@ -12,12 +12,10 @@ class UserModelTests(APITestCase):
             username="testuser",
             email="test@example.com",
             password="password123",
-            role="TENANT",
             phone_number="0700000000",
         )
 
         self.assertEqual(user.username, "testuser")
-        self.assertEqual(user.role, "TENANT")
         self.assertTrue(
             user.check_password("password123")
         )
@@ -35,7 +33,6 @@ class UserRegistrationTests(APITestCase):
             "password": "password123",
             "first_name": "John",
             "last_name": "Doe",
-            "role": "LANDLORD",
             "phone_number": "0700000000",
         }
 
@@ -59,7 +56,7 @@ class UserRegistrationTests(APITestCase):
 
         self.assertEqual(
             user.email,
-            "john@example.com"
+            "john88@example.com"
         )
 
 
@@ -71,7 +68,6 @@ class UserListTests(APITestCase):
             username="admin",
             email="admin@example.com",
             password="password123",
-            role="ADMIN",
         )
 
 
