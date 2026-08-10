@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Organization, OrganizationMembership
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,6 +14,42 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
         ]
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Organization
+        fields = [
+            "id",
+            "name",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class OrganizationMembershipSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=False,
+    )
+
+    class Meta:
+        model = OrganizationMembership
+        fields = [
+            "id",
+            "user",
+            "organization",
+            "role",
+            "joined_at",
+        ]
+        read_only_fields = [
+            "joined_at",
+        ]
+
 
 class RegisterSerializer(serializers.ModelSerializer):
 
