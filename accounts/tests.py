@@ -225,6 +225,45 @@ class OrganizationTests(APITestCase):
             OrganizationMembership.objects.filter(pk=membership.pk).exists()
         )
 
+    def test_owner_can_update_member(self):
+        organization = Organization.objects.create(name="Team Org")
+        OrganizationMembership.objects.create(
+            user=self.owner,
+            organization=organization,
+            role=OrganizationMembership.Role.OWNER,
+        )
+        member = User.objects.create_user(
+            username="tenant",
+            email="tenant@example.com",
+            password="password123",
+        )
+        membership = OrganizationMembership.objects.create(
+            user=member,
+            organization=organization,
+            role=OrganizationMembership.Role.TENANT,
+        )
+
+        url = reverse(
+            "organization-membership-detail",
+            kwargs={
+                "organization_pk": organization.pk,
+                "pk": membership.pk,
+            },
+        )
+
+        response = self.client.patch(
+            url,
+            {"role": OrganizationMembership.Role.ADMIN},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        membership.refresh_from_db()
+        self.assertEqual(
+            membership.role,
+            OrganizationMembership.Role.ADMIN,
+        )
+
     def test_owner_can_update_organization(self):
         organization = Organization.objects.create(name="Team Org")
         OrganizationMembership.objects.create(

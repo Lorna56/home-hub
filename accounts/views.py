@@ -1,5 +1,6 @@
 
 from rest_framework import generics, permissions
+from drf_spectacular.utils import extend_schema
 from .models import User, Organization, OrganizationMembership
 from .serializers import (
     UserSerializer,
@@ -10,18 +11,21 @@ from .serializers import (
 from .permissions import IsOrganizationAdmin
 
 
+@extend_schema(tags=["Auth"])
 class RegisterView(generics.CreateAPIView):
 
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
 
+@extend_schema(tags=["Auth"])
 class UserListView(generics.ListAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
+@extend_schema(tags=["Organization"])
 class OrganizationListCreateView(generics.ListCreateAPIView):
 
     queryset = Organization.objects.all()
@@ -37,6 +41,7 @@ class OrganizationListCreateView(generics.ListCreateAPIView):
         )
 
 
+@extend_schema(tags=["Organization"])
 class OrganizationDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Organization.objects.all()
@@ -50,6 +55,7 @@ class OrganizationDetailView(generics.RetrieveUpdateDestroyAPIView):
         return [permissions.IsAuthenticated()]
 
 
+@extend_schema(tags=["Members"])
 class OrganizationMembershipListCreateView(generics.ListCreateAPIView):
 
     serializer_class = OrganizationMembershipSerializer
@@ -70,7 +76,8 @@ class OrganizationMembershipListCreateView(generics.ListCreateAPIView):
         serializer.save(organization=organization)
 
 
-class OrganizationMembershipDetailView(generics.DestroyAPIView):
+@extend_schema(tags=["Members"])
+class OrganizationMembershipDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = OrganizationMembershipSerializer
     permission_classes = [permissions.IsAuthenticated, IsOrganizationAdmin]
