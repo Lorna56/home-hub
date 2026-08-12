@@ -224,3 +224,84 @@ class OrganizationTests(APITestCase):
         self.assertFalse(
             OrganizationMembership.objects.filter(pk=membership.pk).exists()
         )
+
+    def test_owner_can_update_organization(self):
+        organization = Organization.objects.create(name="Team Org")
+        OrganizationMembership.objects.create(
+            user=self.owner,
+            organization=organization,
+            role=OrganizationMembership.Role.OWNER,
+        )
+
+        url = reverse("organization-detail", kwargs={"pk": organization.pk})
+
+        response = self.client.patch(
+            url,
+            {"name": "Updated Org"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        organization.refresh_from_db()
+        self.assertEqual(organization.name, "Updated Org")
+
+    def test_non_admin_cannot_update_organization(self):
+        organization = Organization.objects.create(name="Team Org")
+        non_admin = User.objects.create_user(
+            username="nonadmin",
+            email="nonadmin2@example.com",
+            password="password123",
+        )
+        OrganizationMembership.objects.create(
+            user=non_admin,
+            organization=organization,
+            role=OrganizationMembership.Role.TENANT,
+        )
+
+        self.client.force_authenticate(user=non_admin)
+
+        url = reverse("organization-detail", kwargs={"pk": organization.pk})
+
+        response = self.client.patch(
+            url,
+            {"name": "Malicious Update"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_owner_can_delete_organization(self):
+        organization = Organization.objects.create(name="Team Org")
+        OrganizationMembership.objects.create(
+            user=self.owner,
+            organization=organization,
+            role=OrganizationMembership.Role.OWNER,
+        )
+
+        url = reverse("organization-detail", kwargs={"pk": organization.pk})
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Organization.objects.filter(pk=organization.pk).exists())
+
+    def test_non_admin_cannot_delete_organization(self):
+        organization = Organization.objects.create(name="Team Org")
+        non_admin = User.objects.create_user(
+            username="nonadmin2",
+            email="nonadmin3@example.com",
+            password="password123",
+        )
+        OrganizationMembership.objects.create(
+            user=non_admin,
+            organization=organization,
+            role=OrganizationMembership.Role.TENANT,
+        )
+
+        self.client.force_authenticate(user=non_admin)
+
+        url = reverse("organization-detail", kwargs={"pk": organization.pk})
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

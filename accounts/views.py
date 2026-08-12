@@ -37,11 +37,17 @@ class OrganizationListCreateView(generics.ListCreateAPIView):
         )
 
 
-class OrganizationDetailView(generics.RetrieveAPIView):
+class OrganizationDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        # Allow any authenticated user to retrieve organization details,
+        # but only organization owners/admins may update or delete.
+        if self.request.method in ("PATCH", "PUT", "DELETE"):
+            return [permissions.IsAuthenticated(), IsOrganizationAdmin()]
+        return [permissions.IsAuthenticated()]
 
 
 class OrganizationMembershipListCreateView(generics.ListCreateAPIView):
