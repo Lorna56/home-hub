@@ -8,7 +8,8 @@ class PropertySerializer(serializers.ModelSerializer):
         model = Property
         fields = [
             "id",
-            "owner",
+            "organization",
+            "created_by",
             "name",
             "description",
             "address",
@@ -16,9 +17,10 @@ class PropertySerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
         read_only_fields = [
             "id",
-            "owner",
+            "created_by",
             "created_at",
             "updated_at",
         ]
