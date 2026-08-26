@@ -1,5 +1,5 @@
 from django.db import models
-from property.models import Property
+from properties.models import Property
 
 
 class Unit(models.Model):
