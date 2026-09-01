@@ -12,9 +12,11 @@ class Property(models.Model):
     )
 
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="created_properties"
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_properties",
     )
 
     name = models.CharField(max_length=255)
