@@ -13,9 +13,7 @@ class Property(models.Model):
 
     created_by = models.ForeignKey(
         "accounts.User",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.PROTECT,
         related_name="created_properties",
     )
 
